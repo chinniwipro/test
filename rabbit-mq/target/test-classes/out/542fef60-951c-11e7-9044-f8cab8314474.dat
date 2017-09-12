@@ -1,0 +1,15 @@
+<xmlversion='1.0'>
+<menu>
+ <id>12345</id> 
+  <value>dhanu</value>
+   <popup><menuitem>
+     <value>New</value>
+      <onclick>CreateNewDo()</onclick>
+        </menuitem><menuitem>
+         <value>Open</value>
+          <onclick>OpenDoc()</onclick>
+            </menuitem><menuitem>
+               <value>Close</value>
+                 <onclick>CloseDoc()</onclick>
+                    </menuitem></popup>
+  </menu>

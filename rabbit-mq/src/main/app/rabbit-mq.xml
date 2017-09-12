@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:amqp="http://www.mulesoft.org/schema/mule/amqp" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/amqp http://www.mulesoft.org/schema/mule/amqp/current/mule-amqp.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd">
+    <http:listener-config name="HTTP_Listener_Configuration" host="0.0.0.0" port="8089" doc:name="HTTP Listener Configuration"/>
+    <amqp:connector name="AMQP_0_9_Connector" validateConnections="true" doc:name="AMQP-0-9 Connector"/>
+    <amqp:connector name="AMQP_0_9_Connector1" validateConnections="true" username="test" password="test" doc:name="AMQP-0-9 Connector"/>
+    <amqp:connector name="AMQP_0_9_Connector2" validateConnections="true" doc:name="AMQP-0-9 Connector"/>
+    <amqp:connector name="AMQP_0_9_Connector3" validateConnections="true" doc:name="AMQP-0-9 Connector"/>
+    <http:listener-config name="HTTP_Listener_Configuration1" host="0.0.0.0" port="8081" doc:name="HTTP Listener Configuration"/>
+    <amqp:connector name="AMQP_0_9_Connector4" validateConnections="true" username="test" password="test" doc:name="AMQP-0-9 Connector"/>
+    <flow name="rabbit-mqFlow">
+        <http:listener config-ref="HTTP_Listener_Configuration1" path="/amqp" allowedMethods="POST" doc:name="HTTP"/>
+        <amqp:outbound-endpoint exchangeType="topic" exchangeDurable="true" responseTimeout="10000" connector-ref="AMQP_0_9_Connector3" doc:name="AMQP-0-9" exchangeName="amq.topic"/>
+        <logger message="Message Published to RabbitMQ" level="INFO" doc:name="Logger"/>
+        <set-payload value="Message" doc:name="Message Published to RabbitMQ"/>
+    </flow>
+    <flow name="rabbit-mqFlow1">
+        <amqp:inbound-endpoint exchangeName="amq.topic" exchangeType="topic" exchangeDurable="true" responseTimeout="10000" connector-ref="AMQP_0_9_Connector4" doc:name="AMQP-0-9"/>
+        <logger message="Message Subscribe from RabbitMQ" level="INFO" doc:name="Logger"/>
+        <json:json-to-xml-transformer doc:name="JSON to XML"/>
+        <logger message="XML&gt;&gt;&gt;&gt;&gt;&gt;#[payload]" level="INFO" doc:name="Logger"/>
+        <file:outbound-endpoint path="src/test/resources/out" responseTimeout="10000" doc:name="File"/>
+        <logger message="OutPut &gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;#[payload]" level="INFO" doc:name="Logger"/>
+    </flow>
+</mule>
