@@ -1,0 +1,53 @@
+<payload>
+ <RoutingHeader>
+   <SourceID></SourceID>   required  occurances>>1
+   <SourceName></SourceName>   occurances>>1
+   <SourceRefNum></SourceRefNum>  required  occurances>>1
+   <SourceRoutingRef></SourceRoutingRef>
+   <DestinationID></DestinationID>
+   <DestinationName></DestinationName>
+   <DestinationRoutingRef></DestinationRoutingRef>
+   <TransDate></TransDate>
+ </RoutingHeader>
+</payload>
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="RoutingHeader" type="RoutingHeader-type"/>
+	<xs:complexType name="RoutingHeader-type">
+		<xs:sequence>
+			<xs:element name="SourceID" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="SourceName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="SourceRefNum" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="SourceRoutingRef" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="DestinationID" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="DestinationName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="DestinationRefNum" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="DestinationRoutingRef" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="TransactionDate" type="xs:date" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+		 <xs:attribute name="SourceID" type="xs:string" use="required"/>
+	</xs:complexType>
+	 <xs:simpleType name="SourceID">
+		<xs:restriction base="xs:int">
+			<xs:totalDigits value="02"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>
+
+
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<RoutingHeader SourceID="" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="file:///C:/Users/dhanu/Desktop/XSD/FA.xsd">
+	<SourceID>78632145</SourceID>
+	<SourceName>dhanu</SourceName>
+	<SourceRefNum>147</SourceRefNum>
+	<SourceRoutingRef>789</SourceRoutingRef>
+	<DestinationID>789</DestinationID>
+	<DestinationName>dhanu</DestinationName>
+	<DestinationRefNum>96</DestinationRefNum>
+	<DestinationRoutingRef>88</DestinationRoutingRef>
+	<TransactionDate>2011-11-04</TransactionDate>
+</RoutingHeader>
