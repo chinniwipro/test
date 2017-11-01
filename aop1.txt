@@ -1,0 +1,80 @@
+package com.aa.aspect;
+
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.stereotype.Component;
+
+@Aspect
+/*@Component
+@Configurable("LoggingAspect")
+@EnableAspectJAutoProxy*/
+public class LoggingAspect {
+	@Around("execution(* com.aa.beans.Calculator.*(..))")
+	public Object log(ProceedingJoinPoint pjp) throws Throwable {
+		System.out.println("entered into method : "
+				+ pjp.getSignature().getName());
+		Object ret = pjp.proceed();
+		System.out.println("exiting from : " + pjp.getSignature().getName()
+				+ " with ret " + ret);
+		return ret;
+	}
+}
+
+
+
+package com.aa.beans;
+
+import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.stereotype.Component;
+
+/*@Component
+@ComponentScan(basePackages = { "com.aa.*" })
+@Configurable("Calculator")*/
+public class Calculator {
+	public int add(int a, int b) {
+		System.out.println("in add()");
+		return a + b;
+	}
+}
+
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+	<bean id="calculator" class="com.aa.beans.Calculator" />
+	<bean id="loggingAspect" class="com.aa.aspect.LoggingAspect" />
+
+<!-- <aop:config expose-proxy="false"/> -->
+<aop:aspectj-autoproxy />
+<context:annotation-config/>
+</beans>
+
+
+
+package com.aa.test;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import com.aa.beans.Calculator;
+
+public class AATest {
+	public static void main(String[] args) {
+		ApplicationContext context = new ClassPathXmlApplicationContext(
+				"com/aa/common/application-context.xml");
+		Calculator proxy = context.getBean("calculator", Calculator.class);
+		int sum = proxy.add(10, 20);
+		System.out.println("sum : "+ sum);
+	}
+}
+
