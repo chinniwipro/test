@@ -1,0 +1,71 @@
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.StringWriter;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.rpc.ServiceException;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
+
+import org.abc.PaymentType;
+
+public class JAXBUtil {
+	
+
+	public static String marshallXML(Object dtoToMarshall)
+			throws JAXBException, IOException {
+		JAXBContext jc = JAXBContext.newInstance(PaymentType.class);
+		Marshaller marshaller = jc.createMarshaller();
+		StringWriter stringWriter = new StringWriter();
+		marshaller.marshal(dtoToMarshall, stringWriter);
+		stringWriter.close();
+		return stringWriter.getBuffer().toString();
+
+	}
+	 
+
+	public static Object unmarshallXML(String messageText)
+			throws ServiceException {
+		Object unmarshalledObject = null;
+		XMLStreamReader xsr = null;
+		try {
+			XMLInputFactory xif = XMLInputFactory.newInstance();
+			xsr = xif.createXMLStreamReader(new ByteArrayInputStream(
+					messageText.getBytes()));
+
+			String elementNameToMatch = PaymentType.class.getSimpleName();
+
+			xsr.nextTag();
+
+			while (!xsr.getLocalName().equals(elementNameToMatch)) {
+
+				xsr.nextTag();
+			}
+
+			JAXBContext jc = JAXBContext.newInstance(PaymentType.class);
+
+			Unmarshaller unmarshaller = jc.createUnmarshaller();
+			JAXBElement jb = unmarshaller.unmarshal(xsr,  PaymentType.class);
+
+			unmarshalledObject = jb.getValue();
+
+		} catch (Exception e) {
+			throw new ServiceException(e);
+		} finally {
+			if (xsr != null) {
+				try {
+					xsr.close();
+				} catch (Exception e) {
+				}
+			}
+		}
+
+		return unmarshalledObject;
+
+	}
+
+}
